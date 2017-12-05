@@ -229,55 +229,51 @@ class vgg16:
     def fc_layers(self):
         # fc1
         with tf.name_scope('fc1_tune') as scope:
-#             shape = int(np.prod(self.pool5.get_shape()[1:]))
-#             fc1w = tf.Variable(tf.truncated_normal([shape, 4096],
-#                                                          dtype=tf.float32,
-#                                                          stddev=1e-1), name='weights')
-#             fc1b = tf.Variable(tf.constant(1.0, shape=[4096], dtype=tf.float32),
-#                                  trainable=True, name='biases')
-#             pool5_flat = tf.reshape(self.pool5, [-1, shape])
-#             fc1l = tf.nn.bias_add(tf.matmul(pool5_flat, fc1w), fc1b)
-#             self.fc1 = tf.nn.relu(fc1l)
-#             self.parameters += [fc1w, fc1b]
-            self.fc1 = tf.contrib.layers.fully_connected(self.outconv, 4096, activation_fn=tf.nn.relu)
-            self.b1 = tf.layers.batch_normalization(self.fc1, center=False, scale=False, training=self.training)
-            self.d1 = tf.contrib.layers.dropout(self.b1, keep_prob=self.keep_prob, is_training=self.training)
+            shape = int(np.prod(self.pool5.get_shape()[1:]))
+            fc1w = tf.Variable(tf.truncated_normal([shape, 4096],
+                                                         dtype=tf.float32,
+                                                         stddev=1e-1), name='weights')
+            fc1b = tf.Variable(tf.constant(1.0, shape=[4096], dtype=tf.float32),
+                                 trainable=True, name='biases')
+            pool5_flat = tf.reshape(self.pool5, [-1, shape])
+            fc1l = tf.nn.bias_add(tf.matmul(pool5_flat, fc1w), fc1b)
+            self.fc1 = tf.nn.relu(fc1l)
+#             self.fc1 = tf.contrib.layers.fully_connected(self.outconv, 4096, activation_fn=tf.nn.relu)
+#             self.b1 = tf.layers.batch_normalization(self.fc1, center=False, scale=False, training=self.training)
+#             self.d1 = tf.contrib.layers.dropout(self.b1, keep_prob=self.keep_prob, is_training=self.training)
+            self.parameters += [fc1w, fc1b]
 
         # fc2
         with tf.name_scope('fc2_tune') as scope:
-#             fc2w = tf.Variable(tf.truncated_normal([4096, 1024],
-#                                                          dtype=tf.float32,
-#                                                          stddev=1e-1), name='weights')
-#             fc2b = tf.Variable(tf.constant(1.0, shape=[1024], dtype=tf.float32),
-#                                  trainable=True, name='biases')
-#             fc2l = tf.nn.bias_add(tf.matmul(self.fc1, fc2w), fc2b)
-#             self.fc2 = tf.nn.relu(fc2l)
-#             self.parameters += [fc2w, fc2b]
-            self.fc2 = tf.contrib.layers.fully_connected(self.d1, 1024, activation_fn=tf.nn.relu)
-            self.b2 = tf.layers.batch_normalization(self.fc2, center=False, scale=False, training=self.training)
-            self.d2 = tf.contrib.layers.dropout(self.b2, keep_prob=self.keep_prob, is_training=self.training)
+            fc2w = tf.Variable(tf.truncated_normal([4096, 1024],
+                                                         dtype=tf.float32,
+                                                         stddev=1e-1), name='weights')
+            fc2b = tf.Variable(tf.constant(1.0, shape=[1024], dtype=tf.float32),
+                                 trainable=True, name='biases')
+            fc2l = tf.nn.bias_add(tf.matmul(self.fc1, fc2w), fc2b)
+            self.fc2 = tf.nn.relu(fc2l)
+            self.parameters += [fc2w, fc2b]
+#             self.fc2 = tf.contrib.layers.fully_connected(self.d1, 1024, activation_fn=tf.nn.relu)
+#             self.b2 = tf.layers.batch_normalization(self.fc2, center=False, scale=False, training=self.training)
+#             self.d2 = tf.contrib.layers.dropout(self.b2, keep_prob=self.keep_prob, is_training=self.training)
 
         # fc3
         with tf.name_scope('fc3_tune') as scope:
-#             fc3w = tf.Variable(tf.truncated_normal([1024, 20],
-#                                                          dtype=tf.float32,
-#                                                          stddev=1e-1), name='weights')
-#             fc3b = tf.Variable(tf.constant(1.0, shape=[20], dtype=tf.float32),
-#                                  trainable=True, name='biases')
-#             self.fc3l = tf.nn.bias_add(tf.matmul(self.fc2, fc3w), fc3b)
-#             self.parameters += [fc3w, fc3b]
-            self.fc31 = tf.contrib.layers.fully_connected(self.d2, 20, activation_fn=tf.nn.relu)
-            self.b3 = tf.layers.batch_normalization(self.fc31, center=False, scale=False, training=self.training)
-            self.d3 = tf.contrib.layers.dropout(self.b3, keep_prob=self.keep_prob, is_training=self.training)
+            fc3w = tf.Variable(tf.truncated_normal([1024, 20],
+                                                         dtype=tf.float32,
+                                                         stddev=1e-1), name='weights')
+            fc3b = tf.Variable(tf.constant(1.0, shape=[20], dtype=tf.float32),
+                                 trainable=True, name='biases')
+            self.fc3l = tf.nn.bias_add(tf.matmul(self.fc2, fc3w), fc3b)
+            self.parameters += [fc3w, fc3b]
+#             self.fc31 = tf.contrib.layers.fully_connected(self.d2, 20, activation_fn=tf.nn.relu)
+#             self.b3 = tf.layers.batch_normalization(self.fc31, center=False, scale=False, training=self.training)
+#             self.d3 = tf.contrib.layers.dropout(self.b3, keep_prob=self.keep_prob, is_training=self.training)
 
     def load_weights(self, weight_file, sess):
         weights = np.load(weight_file)
         keys = sorted(weights.keys())
         for i, k in enumerate(keys):
-#             if i == len(self.parameters) - 2: # don't add back the weights of the very last FC layer
-#                 break
-            if i >= len(self.parameters):
-                break
             print(i, k, np.shape(weights[k]))
             sess.run(self.parameters[i].assign(weights[k]))
 
