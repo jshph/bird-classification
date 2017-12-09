@@ -19,13 +19,6 @@ class vgg16:
         self.imgs = imgs
         self.unfreeze = False
         self.convlayers()
-        # ends with fc31
-#         pretrained_vars = tf.trainable_variables()
-#         saver_pretrained = tf.train.Saver(pretrained_vars)
-#         sess = tf.Session()
-#         sess.run(tf.global_variables_initializer())
-#         sess.run(tf.local_variables_initializer())
-#         saver_pretrained.restore(sess, 
         
         # assign these later, after initializing the fully_connected ones to random.
         self.weights = weights
@@ -266,7 +259,7 @@ class vgg16:
 #                                  trainable=True, name='biases')
 #             self.fc3l = tf.nn.bias_add(tf.matmul(self.fc2, fc3w), fc3b)
 #             self.parameters += [fc3w, fc3b]
-            self.fc31 = tf.contrib.layers.fully_connected(self.d2, 20, activation_fn=tf.nn.relu)
+            self.fc31 = tf.contrib.layers.fully_connected(self.d2, 50, activation_fn=tf.nn.relu)
             self.b3 = tf.layers.batch_normalization(self.fc31, center=False, scale=False, training=self.training)
             self.d3 = tf.contrib.layers.dropout(self.b3, keep_prob=self.keep_prob, is_training=self.training)
 
